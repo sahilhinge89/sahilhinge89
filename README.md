@@ -1,15 +1,1 @@
-
-<picture>
-  <source
-    media="(prefers-color-scheme: dark)"
-    srcset="https://raw.githubusercontent.com/sahilhinge89/sahilhinge89/main/dark_mode.svg"
-  />
-  <source
-    media="(prefers-color-scheme: light)"
-    srcset="https://raw.githubusercontent.com/sahilhinge89/sahilhinge89/main/light_mode.svg"
-  />
-  <img
-    alt="sahilhinge89's GitHub profile"
-    src="https://raw.githubusercontent.com/sahilhinge89/sahilhinge89/main/dark_mode.svg"
-  />
-</picture>
+<picture> <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/sahilhinge89/sahilhinge89/main/dark_mode.svg" /> <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/sahilhinge89/sahilhinge89/main/light_mode.svg" /> <img alt="sahilhinge89's GitHub profile" src="https://raw.githubusercontent.com/sahilhinge89/sahilhinge89/main/dark_mode.svg" /> </picture>
