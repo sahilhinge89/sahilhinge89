@@ -1,12 +1,11 @@
-# gh-ascii — daily card refresh
+# gh-ascii — daily card refresh WITH animation
 #
 # Place this file at: .github/workflows/refresh-card.yml
 # in your profile repo: github.com/sahilhinge89/sahilhinge89
 #
-# Committed SVGs are a frozen snapshot: stars, followers and Uptime silently
-# go stale. This re-downloads both themes once a day and commits them only
-# when the card actually changed, so the numbers stay current without you
-# touching anything.
+# Also place scripts/animate_card.py in your repo (see below) — this
+# workflow calls it after downloading, so every refresh keeps both the
+# live stats AND the fade-in / staggered-reveal / scanning-line animation.
 #
 # Heads-up: GitHub disables scheduled workflows after 60 days of repository
 # inactivity and emails the owner. Profile repos are quiet by design, so this
@@ -35,6 +34,10 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
       - name: Download both themes
         env:
           HANDLE: sahilhinge89
@@ -49,6 +52,11 @@ jobs:
           curl -fsSL --retry 3 --retry-delay 5 \
             "$GH_ASCII_URL/$HANDLE?theme=light${COLS:+&cols=$COLS}" \
             -o light_mode.svg
+
+      - name: Re-apply the animation
+        run: |
+          python3 scripts/animate_card.py dark_mode.svg
+          python3 scripts/animate_card.py light_mode.svg
 
       - name: Commit only if the card changed
         run: |
