@@ -1,0 +1,71 @@
+# gh-ascii — daily card refresh WITH animation
+#
+# Place this file at: .github/workflows/refresh-card.yml
+# in your profile repo: github.com/sahilhinge89/sahilhinge89
+#
+# Also place scripts/animate_card.py in your repo (see below) — this
+# workflow calls it after downloading, so every refresh keeps both the
+# live stats AND the fade-in / staggered-reveal / scanning-line animation.
+#
+# Heads-up: GitHub disables scheduled workflows after 60 days of repository
+# inactivity and emails the owner. Profile repos are quiet by design, so this
+# can bite — if the card stops updating, re-enable the workflow from the
+# Actions tab (the "Run workflow" button is also a quick way to check it).
+
+name: Refresh gh-ascii card
+
+on:
+  schedule:
+    # Daily at 06:17 UTC. Off-the-hour times get scheduled more reliably —
+    # GitHub drops runs when everyone piles onto :00.
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-gh-ascii-card
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Download both themes
+        env:
+          HANDLE: sahilhinge89
+          # Swap this for your own deployment if you self-host gh-ascii.
+          GH_ASCII_URL: https://gh.crafter.run
+          # Optional: ASCII resolution, 40-160 (default 100).
+          # COLS: "120"
+        run: |
+          curl -fsSL --retry 3 --retry-delay 5 \
+            "$GH_ASCII_URL/$HANDLE?theme=dark${COLS:+&cols=$COLS}" \
+            -o dark_mode.svg
+          curl -fsSL --retry 3 --retry-delay 5 \
+            "$GH_ASCII_URL/$HANDLE?theme=light${COLS:+&cols=$COLS}" \
+            -o light_mode.svg
+
+      - name: Re-apply the animation
+        run: |
+          python3 scripts/animate_card.py dark_mode.svg
+          python3 scripts/animate_card.py light_mode.svg
+
+      - name: Commit only if the card changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dark_mode.svg light_mode.svg
+          if git diff --cached --quiet; then
+            echo "Card unchanged — nothing to commit."
+          else
+            git commit -m "chore: refresh gh-ascii card"
+            git push
+          fi
