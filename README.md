@@ -12,7 +12,7 @@
     src="https://cdn.jsdelivr.net/gh/sahilhinge89/sahilhinge89@main/dark_mode.svg"
   />
 </picture>
-# Sahil Hinge
+Sahil Hinge
 
 Full-Stack Developer | MERN Stack | DevOps
 
